@@ -32,13 +32,13 @@ Event
         }
     }
 
-$event = new Event();
-$event->connect('foo.before_send', 'Bar', 'onFooBeforeSend');
-$event->connect('foo.after_send', 'Bar', 'onFooAfterSend');
-
-$foo = new Foo();
-$foo->event = $event;
-$foo->send('foo value', 'bar value');
-
-$this->bind('Foo')->event('foo.before_send', 'Bar', 'onFooAfterSend');
+    $event = new Event();
+    $event->connect('foo.before_send', 'Bar', 'onFooBeforeSend');
+    $event->connect('foo.after_send', 'Bar', 'onFooAfterSend');
+    
+    $foo = new Foo();
+    $foo->event = $event;
+    $foo->send('foo value', 'bar value');
+    
+    $this->bind('Foo')->event('foo.before_send', 'Bar', 'onFooAfterSend');
 
