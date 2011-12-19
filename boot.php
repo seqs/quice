@@ -1,8 +1,8 @@
 <?php
 
-!isset($config) or $config = array();
-!isset($packages) or $packages = array();
-!isset($components) or $components = array();
+!isset($config) and $config = array();
+!isset($packages) and $packages = array();
+!isset($components) and $components = array();
 
 $_config = array(
     'env' => 'dev',
@@ -15,8 +15,8 @@ $_packages = array(
 
 $_components = array(
     // Globals
-    'FrontAction' => array(
-        'class' => 'Quice\Action\FrontAction',
+    'Dispatcher' => array(
+        'class' => 'Quice\Action\ActionDispatcher',
         'properties' => array(
             'request' => 'Request',
             'response' => 'Response',
@@ -30,8 +30,35 @@ $_components = array(
     ),
     'Template' => array(
         'class' => 'Quice\Template\TemplateEngine',
-        'properties' => array('dir' => '%tpl.dir%'),
+        'properties' => array(
+            'dir' => '%tpl.dir%',
+            'slots' => array(
+                'url' => 'UrlHelper',
+                'request' => 'Request',
+                'trans' => 'Trans',
+                'html' => 'HtmlHelper',
+            ),
+        ),
     ),
+
+    'UrlHelper' => array(
+        'class' => 'Quice\Helper\UrlHelper',
+        'properties' => array('request' => 'Request'),
+    ),
+
+    'HtmlHelper' => array(
+        'class' => 'Quice\Helper\HtmlHelper',
+        'properties' => array('url' => 'UrlHelper'),
+    ),
+
+    'Trans' => array(
+        'class' => 'Quice\Locale\Translate',
+        'properties' => array('dir' => '%i18n.dir%'),
+    ),
+
+    // Modules
+    'CoreModule' => array('class' => 'Quice\Developer\DeveloperModule'),
+    'DevModule' => array('class' => 'Quice\Developer\DeveloperModule')
 );
 
 $config = array_merge($_config, $config);
@@ -50,10 +77,10 @@ try {
     $loader->register($packages);
 
     $injector = new Injector($components, $config);
-    $injector->getComponent('FrontAction')->execute();
+    $injector->getComponent('Dispatcher')->execute();
 } catch(Exception $e) {
-    echo $e->getMessage() . "\n";
-    echo $e->getTraceAsString() . "\n";
+    echo "<h3>" . $e->getMessage() . "<h3>\n";
+    echo "<pre>" . $e->getTraceAsString() . "</pre>\n";
 }
 
 ?>
