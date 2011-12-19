@@ -430,24 +430,13 @@ class Response
     }
 
     /**
-     * Set renderer
-     *
-     * @return void
-     */
-    public function setRenderer($renderer)
-    {
-        $this->renderer = $renderer;
-    }
-
-    /**
      * Render content and send output
      *
      * @return void
      */
-    public function render($name, $context = array())
+    public function render($name, $vars = array())
     {
-        $this->renderer->context = $this->context;
-        $this->send($this->renderer->render($name, $context));
+        $this->send($this->renderer->render($name, $vars));
     }
 
 }
