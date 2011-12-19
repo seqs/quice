@@ -11,17 +11,10 @@ class UrlHelper
     {
         $url = $this->request->getBaseUrl() . '/';
 
-        if (!$module) {
-            return $url;
-        } else {
-            $url .= $this->rewrite ? $module : '?router=' . $action;
-        }
+        $query['module'] = $module;
+        $query['action'] = $action;
 
-        if ($this->rewrite) {
-            $seprator = '?';
-        } else {
-            $seprator = '&amp;';
-        }
+        $seprator = '?';
 
         foreach ($query as $name => $value) {
             if ($value) {
