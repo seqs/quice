@@ -10,8 +10,10 @@ use Exception;
  * @category   Container
  * @copyright  Copyright (c) 2008 Thomas McKelvey
  * @copyright  Copyright (c) 2009 Benjamin Eberlei
+ * @copyright  Copyright (c) 2011 sunseesiu
  * @author     Thomas McKelvey (http://github.com/tsmckelvey/yadif/tree/master)
  * @author     Benjamin Eberlei (http://github.com/beberlei/yadif/tree/master)
+ * @author     sunseesiu (http://github.com/sunseesiu/quice/tree/master)
  */
 class Injector
 {
@@ -363,11 +365,11 @@ class Injector
         $origName = $name;
         $name = strtolower($name);
 
-        if(isset($this->instances[$name])) {
+        if (isset($this->instances[$name])) {
             return $this->instances[$name];
         }
 
-        if($name === "thiscontainer") {
+        if ($name === "thiscontainer") {
             return $this;
         } elseif($name === "clonecontainer") {
             return clone $this;
@@ -408,7 +410,7 @@ class Injector
             unset($this->instances['decoratedinstance']);
         }
 
-        if($scope !== self::SCOPE_PROTOTYPE) {
+        if ($scope !== self::SCOPE_PROTOTYPE) {
             $this->instances[$name] = $componentInstance;
         }
 
@@ -419,10 +421,15 @@ class Injector
 
     protected function injectParameter($propertyValue, $component)
     {
-        if(substr($propertyValue, 0, 1) == self::CHAR_CONFIG_VALUE
+        if (is_array($propertyValue)) {
+            $value = array();
+            foreach ($propertyValue as $k => $v) {
+                $value[$k] = $this->injectParameter($v, $component);
+            }
+        } elseif (substr($propertyValue, 0, 1) == self::CHAR_CONFIG_VALUE
                 && substr($propertyValue, -1) == self::CHAR_CONFIG_VALUE) {
             $value = $this->getConfigValue($propertyValue);
-        } elseif(substr($propertyValue, 0, 1) == self::CHAR_PARAM_VALUE) {
+        } elseif (substr($propertyValue, 0, 1) == self::CHAR_PARAM_VALUE) {
             $value =  $this->getParam($propertyValue, $component);
         } else {
             $value = $this->getComponent($propertyValue);
@@ -439,7 +446,7 @@ class Injector
      */
     protected function getConfigValue($accessor)
     {
-        if($this->config === null) {
+        if ($this->config === null) {
             throw new Exception("A config value '".$accessor."' is required but no config was given!");
         }
 
@@ -447,7 +454,7 @@ class Injector
 
         $parts = explode(".", $accessor);
         $current = $this->config;
-        for($i = 0; $i < count($parts); $i++) {
+        for ($i = 0; $i < count($parts); $i++) {
             $current = isset($current[$parts[$i]]) ? $current[$parts[$i]] : null;
         }
         return $current;
