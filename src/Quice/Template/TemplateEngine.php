@@ -2,12 +2,13 @@
 
 namespace Quice\Template;
 
+use Exception;
+
 class TemplateEngine
 {
     public $dir = './tpl';
-    public $html, $form, $url, $trans, $context;
 
-    private $vars = array();
+    public $slots = array();
     private $templates = array();
     private $parents = array();
     private $current = null;
@@ -17,11 +18,11 @@ class TemplateEngine
     public function set($key, $value = null)
     {
         if(is_array($key)) {
-            $this->vars = array_merge($this->vars, $key);
+            $this->slots = array_merge($this->slots, $key);
         } else if (is_string($key)) {
-            $this->vars[$key] = $value;
+            $this->slots[$key] = $value;
         } else {
-            throw new Exception('Invalid vars key, must be string.');
+            throw new Exception('Invalid slots key, must be string.');
         }
 
         return $this;
@@ -29,12 +30,12 @@ class TemplateEngine
 
     public function get($key, $default = null)
     {
-        return isset($this->vars[$key]) ? $this->vars[$key] : $default;
+        return isset($this->slots[$key]) ? $this->slots[$key] : $default;
     }
 
-    public function escape($var)
+    public function escape($str)
     {
-        return htmlspecialchars($var);
+        return htmlspecialchars($str);
     }
 
     public function iff($t, $a, $b)
@@ -59,7 +60,7 @@ class TemplateEngine
 
     public function start($name)
     {
-        $this->vars[$name] = '';
+        $this->slots[$name] = '';
         ob_start();
     }
 
@@ -67,7 +68,7 @@ class TemplateEngine
     {
         $content = ob_get_contents();
         ob_end_clean();
-        $this->vars[$name] = $content;
+        $this->slots[$name] = $content;
     }
 
     public function exists($name)
@@ -101,7 +102,7 @@ class TemplateEngine
         }
 
         // Get template file
-        extract($this->vars);
+        extract($this->slots);
         ob_start();
 
         try {
@@ -135,17 +136,17 @@ class TemplateEngine
     /**
      * Render
      */
-    public function render($name, $vars = array())
+    public function render($name, $slots = array())
     {
-        $this->set($vars);
+        $this->set($slots);
         $this->current = $name;
         $this->parents[$name] = null;
         $content = $this->partial($name);
 
         // decorator
         if ($this->parents[$name]) {
-            $vars['__child__'] = $content;
-            $content = $this->render($this->parents[$name], $vars);
+            $slots['__child__'] = $content;
+            $content = $this->render($this->parents[$name], $slots);
         }
 
         return $content;
