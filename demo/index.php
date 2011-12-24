@@ -6,12 +6,12 @@ $config = array(
 );
 
 $packages = array(
-    'Demo' => __DIR__ . '/src'
+    'Quice\Demo' => __DIR__ . '/src'
 );
 
 $components = array(
     // Modules
-    'CoreModule' => array('class' => 'Demo\Example\ExampleModule')
+    'CoreModule' => array('class' => 'Quice\Demo\DemoModule')
 );
 
 require __DIR__ . '/../boot.php';
