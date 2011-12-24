@@ -153,4 +153,20 @@ class Builder
         return $this;
     }
 
+    /**
+     * Register a listener to a given event name
+     *
+     * @param  string $eventName
+     * @param  string $methodName
+     * @return Builder
+     */
+    public function on($eventName, $methodName)
+    {
+        if(!isset($this->config[$this->lastComponentName]['events'])) {
+            $this->config[$this->lastComponentName]['events'] = array();
+        }
+        $this->config[$this->lastComponentName]['events'][$eventName] = $methodName;
+        return $this;
+    }
+
 }

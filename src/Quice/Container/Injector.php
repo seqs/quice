@@ -51,6 +51,11 @@ class Injector
     const CONFIG_SCOPE = 'scope';
 
     /**
+     * Events
+     */
+    const CONFIG_EVENTS = 'events';
+
+    /**
      * Factory Config key for classes that are instantiated via a static factory method
      */
     const CONFIG_FACTORY = 'factory';
@@ -91,6 +96,13 @@ class Injector
      * @var array
      */
     private $currentComponents = array();
+
+    /**
+     * Events
+     *
+     * @var array
+     */
+    protected $events = array();
 
     /**
      * Construct Dependency Injection Container
@@ -161,6 +173,16 @@ class Injector
     }
 
     /**
+     * Get events inside this Container
+     *
+     * @return array
+     */
+    public function getEvents()
+    {
+        return $this->events;
+    }
+
+    /**
      * Merge two Containers
      *
      * @todo   Handle duplicates, currently array_merge overwrites them
@@ -175,6 +197,8 @@ class Injector
         $otherConfig = $container->getConfig();
         $ownConfig = $this->getConfig();
         $this->setConfig(array_merge($ownConfig, $otherConfig));
+
+        $this->events = array_merge($this->events, $container->getEvents());
 
         return $this;
     }
@@ -223,6 +247,16 @@ class Injector
             // check for singleton config parameter and set it to true as default if not found.
             if(!isset($config[self::CONFIG_SCOPE])) {
                 $config[self::CONFIG_SCOPE] = self::SCOPE_SINGLETON;
+            }
+
+            // Register events
+            if(isset($config[self::CONFIG_EVENTS])) {
+                foreach ((array)$config[self::CONFIG_EVENTS] as $eventName => $methodName) {
+                    if (!isset($this->events[$eventName])) {
+                        $this->events[$eventName] = array();
+                    }
+                    $this->events[$eventName][] = array($name, $methodName);
+                }
             }
 
             $name = strtolower($name);
