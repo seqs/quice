@@ -10,7 +10,7 @@ namespace Quice\Event;
  */
 class EventDispatcher
 {
-    public $listeners = array();
+    private $listeners = array();
     public $container;
 
     public function connect($name, $listener)
@@ -37,9 +37,13 @@ class EventDispatcher
 
     public function notify($name, $params = array())
     {
+        $events = $this->container->getEvents();
+        $this->listeners = array_merge($this->listeners, $events);
+
         $event = new EventNotifier($name, $params);
 
         foreach ($this->getListeners($name) as $listener) {
+            list($listenerName, $listenerMethod) = $listener;
             $listenerClass = $this->container->getComponent($listenerName);
             $event = $listenerClass->$listenerMethod($event);
             if (!$event->isProcessed()) {

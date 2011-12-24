@@ -17,18 +17,18 @@ class EventNotifier implements ArrayAccess
       $value      = null,
       $processed  = false,
       $name       = '',
-      $parameters = null;
+      $params = array();
 
     /**
      * Constructs a new EventListener.
      *
      * @param string  $name         The event name
-     * @param array   $parameters   An array of parameters
+     * @param array   $params   An array of params
      */
-    public function __construct($name, $parameters = array())
+    public function __construct($name, $params = array())
     {
         $this->name = $name;
-        $this->parameters = $parameters;
+        $this->params = $params;
     }
 
     /**
@@ -82,13 +82,23 @@ class EventNotifier implements ArrayAccess
     }
 
     /**
-     * Returns the event parameters.
+     * Returns the event params.
      *
-     * @return array The event parameters
+     * @return array The event params
      */
-    public function getParameters()
+    public function getParams()
     {
-        return $this->parameters;
+        return $this->params;
+    }
+
+    /**
+     * Returns the event param by name.
+     *
+     * @return mix The event param value
+     */
+    public function getParam($name)
+    {
+        return $this->offsetGet($name);
     }
 
     /**
@@ -100,7 +110,7 @@ class EventNotifier implements ArrayAccess
      */
     public function offsetExists($name)
     {
-        return array_key_exists($name, $this->parameters);
+        return array_key_exists($name, $this->params);
     }
 
     /**
@@ -112,11 +122,11 @@ class EventNotifier implements ArrayAccess
      */
     public function offsetGet($name)
     {
-        if (!array_key_exists($name, $this->parameters)) {
+        if (!array_key_exists($name, $this->params)) {
             throw new InvalidArgumentException(sprintf('The event "%s" has no "%s" parameter.', $this->name, $name));
         }
 
-        return $this->parameters[$name];
+        return $this->params[$name];
     }
 
     /**
@@ -127,7 +137,7 @@ class EventNotifier implements ArrayAccess
      */
     public function offsetSet($name, $value)
     {
-        $this->parameters[$name] = $value;
+        $this->params[$name] = $value;
     }
 
     /**
@@ -137,6 +147,6 @@ class EventNotifier implements ArrayAccess
      */
     public function offsetUnset($name)
     {
-        unset($this->parameters[$name]);
+        unset($this->params[$name]);
     }
 }
