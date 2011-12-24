@@ -15,13 +15,17 @@ $_packages = array(
 
 $_components = array(
     // Globals
-    'Dispatcher' => array(
+    'ActionDispatcher' => array(
         'class' => 'Quice\Action\ActionDispatcher',
         'properties' => array(
             'request' => 'Request',
             'response' => 'Response',
             'container' => 'ThisContainer'
         ),
+    ),
+    'EventDispatcher' => array(
+        'class' => 'Quice\Event\EventDispatcher',
+        'properties' => array('container' => 'ThisContainer'),
     ),
     'Request' => array('class' => 'Quice\Http\Request'),
     'Response' => array(
@@ -77,10 +81,8 @@ try {
     $loader->register($packages);
 
     $injector = new Injector($components, $config);
-    $injector->getComponent('Dispatcher')->execute();
+    $injector->getComponent('ActionDispatcher')->execute();
 } catch(Exception $e) {
     echo "<h3>" . $e->getMessage() . "<h3>\n";
     echo "<pre>" . $e->getTraceAsString() . "</pre>\n";
 }
-
-?>
