@@ -1,5 +1,5 @@
-Install
-=======
+Quice Install
+=============
 
 Downloading Quice
 -----------------
