@@ -1,0 +1,13 @@
+<?php $this->extend('quice:base'); ?>
+
+<div class="box">
+    <h2 class="title success">Quice demo</h2>
+
+    <ul class="nav">
+        <li><a href="<?php echo $url->href(); ?>">Home</a> <span class="divider">-</span></li>
+        <li><a href="<?php echo $url->href('demo', 'event'); ?>">Event</a></li>
+    </ul>
+
+</div>
+
+<?php echo $this->getChild(); ?>
