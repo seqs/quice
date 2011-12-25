@@ -6,11 +6,12 @@
 
 $_config = array(
     'env' => 'dev',
-    'tpl' => array('dir' => __DIR__ . '/tpl')
+    'tpl' => array('dirs' => array('quice' => __DIR__ . '/dev/tpl'))
 );
 
 $_packages = array(
-    'Quice' => __DIR__ . '/src'
+    'Quice' => __DIR__ . '/src',
+    'Quice\Developer' => __DIR__ . '/dev/src'
 );
 
 $_components = array(
@@ -35,7 +36,7 @@ $_components = array(
     'Template' => array(
         'class' => 'Quice\Template\TemplateEngine',
         'properties' => array(
-            'dir' => '%tpl.dir%',
+            'dirs' => '%tpl.dirs%',
             'slots' => array(
                 'url' => 'UrlHelper',
                 'request' => 'Request',
@@ -62,14 +63,22 @@ $_components = array(
 
     // Modules
     'CoreModule' => array('class' => 'Quice\Developer\DeveloperModule'),
-    'DevModule' => array('class' => 'Quice\Developer\DeveloperModule')
+    'DevModule' => array('class' => 'Quice\Developer\DeveloperModule'),
+    'ErrorModule' => array('class' => 'Quice\Developer\DeveloperModule')
 );
 
 $config = array_merge($_config, $config);
 $packages = array_merge($_packages, $packages);
 $components = array_merge($_components, $components);
+$config['tpl']['dirs'] = isset($config['tpl']['dirs'])
+    ? array_merge((array)$config['tpl']['dirs'], $_config['tpl']['dirs'])
+    : $_config['tpl']['dirs'];
 
 error_reporting($config['env'] == 'dev' ? E_ALL|E_STRICT : 0);
+
+if (version_compare(phpversion(), '5.3.2', '<') === true) {
+    die('Quice only supports PHP 5.3.2 or higher version.');
+}
 
 require_once __DIR__ . '/src/Quice/Package/Autoloader.php';
 
@@ -83,6 +92,6 @@ try {
     $injector = new Injector($components, $config);
     $injector->getComponent('ActionDispatcher')->execute();
 } catch(Exception $e) {
-    echo "<h3>" . $e->getMessage() . "<h3>\n";
+    echo "<h3>" . $e->getMessage() . "</h3>\n";
     echo "<pre>" . $e->getTraceAsString() . "</pre>\n";
 }
