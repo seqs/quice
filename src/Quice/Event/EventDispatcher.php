@@ -10,8 +10,8 @@ namespace Quice\Event;
  */
 class EventDispatcher
 {
-    private $listeners = array();
     public $container;
+    private $listeners = array();
 
     public function connect($name, $listener)
     {
