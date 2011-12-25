@@ -1,0 +1,10 @@
+<?php $this->extend('quice:base'); ?>
+
+<div class="box">
+    <h2 class="title error"><?php echo $this->escape($e->getMessage()); ?></h2>
+
+    <div class="block">
+        <code><pre><?php echo $e->getTraceAsString(); ?></pre></code>
+    </div>
+
+</div>

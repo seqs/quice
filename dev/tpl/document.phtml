@@ -1,0 +1,19 @@
+<?php $this->extend('quice:base'); ?>
+
+<div class="box">
+    <h2 class="title success">Quice Document</h2>
+
+    <ul class="nav">
+        <li><a href="<?php echo $url->href('dev', 'doc'); ?>">Home</a> <span class="divider">-</span></li>
+        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'install')); ?>">Install</a> <span class="divider">-</span></li>
+        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'container')); ?>">Container</a> <span class="divider">-</span></li>
+        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'module')); ?>">Module</a> <span class="divider">-</span></li>
+        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'action')); ?>">Action</a> <span class="divider">-</span></li>
+        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'service')); ?>">Service</a> <span class="divider">-</span></li>
+        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'event')); ?>">Event</a></li>
+    </ul>
+
+    <div class="block">
+        <p><?php echo $content; ?></p>
+    </div>
+</div>

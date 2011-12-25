@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>Quice</title>
+<?php echo $this->partial('quice:style'); ?>
+</head>
+<body>
+
+<div class="container">
+    <?php echo $this->getChild(); ?>
+    <p style="color:grey;text-align:center;">
+        Build with Quice.
+        <a href="<?php echo $url->href('dev', 'doc'); ?>">Documents</a>
+    </p>
+</div>
+
+</body>
+</html>
