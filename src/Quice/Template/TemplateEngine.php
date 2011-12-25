@@ -6,9 +6,9 @@ use Exception;
 
 class TemplateEngine
 {
-    public $dir = './tpl';
-
+    public $dirs = array();
     public $slots = array();
+
     private $templates = array();
     private $parents = array();
     private $current = null;
@@ -17,7 +17,7 @@ class TemplateEngine
 
     public function set($key, $value = null)
     {
-        if(is_array($key)) {
+        if (is_array($key)) {
             $this->slots = array_merge($this->slots, $key);
         } else if (is_string($key)) {
             $this->slots[$key] = $value;
@@ -40,7 +40,7 @@ class TemplateEngine
 
     public function iff($t, $a, $b)
     {
-        if($t) {
+        if ($t) {
             return $a;
         } else {
             return $b;
@@ -73,7 +73,7 @@ class TemplateEngine
 
     public function exists($name)
     {
-        if(isset($this->templates[$name])) {
+        if (isset($this->templates[$name])) {
             return $this->templates[$name];
         }
 
@@ -81,7 +81,19 @@ class TemplateEngine
             throw new Exception('A template name cannot contain NUL bytes.');
         }
 
-        $this->currentFile = $this->dir . '/' . $name . '.phtml';
+        // split alias & template
+        if (false !== $pos = strpos($name, ':')) {
+            $alias = substr($name, 0, $pos);
+            $name = substr($name, $pos + 1);
+        } else {
+            $alias = 'default';
+        }
+
+        if (!isset($this->dirs[$alias])) {
+            throw new Exception(sprintf('The template directory "%s" is not registered.', $alias));
+        }
+
+        $this->currentFile = $this->dirs[$alias] . '/' . $name . '.phtml';
 
         if (!file_exists($this->currentFile)) {
             return false;
@@ -92,12 +104,12 @@ class TemplateEngine
 
     public function partial($name)
     {
-        if(isset($this->contents[$name])) {
+        if (isset($this->contents[$name])) {
             return $this->contents[$name];
         }
 
         $__template__ = $name;
-        if(!$__file__ = $this->exists($__template__)) {
+        if (!$__file__ = $this->exists($__template__)) {
             throw new Exception('Unable read template: ' . $this->currentFile);
         }
 
