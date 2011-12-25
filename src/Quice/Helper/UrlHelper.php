@@ -11,8 +11,7 @@ class UrlHelper
     {
         $url = $this->request->getBaseUrl() . '/';
 
-        $query['module'] = $module;
-        $query['action'] = $action;
+        $query = array_merge(array('module' => $module, 'action' => $action), $query);
 
         $seprator = '?';
 
