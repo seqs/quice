@@ -19,7 +19,7 @@ class ActionDispatcher
 
     private function error($e)
     {
-        $moduleClass = $this->container->getComponent('CoreModule');
+        $moduleClass = $this->container->getComponent('ErrorModule');
         $this->container->addComponents($moduleClass->getConfig());
         $errorAction = $this->container->getComponent('ErrorAction');
         $errorAction->request = $this->request;
