@@ -5,7 +5,7 @@ namespace Quice\Data;
 class DataPager
 {
     private $results;
-    private $pageSize;
+    private $perPage;
 
     private $currentPage;
     private $pageIndex;
@@ -14,17 +14,17 @@ class DataPager
     private $pageStart;
     private $pageEnd;
 
-    public function __construct($totalRecords = 0, $currentPage = 1, $pageSize = 20)
+    public function __construct($totalRecords = 0, $currentPage = 1, $perPage = 20)
     {
         $this->totalRecords = $totalRecords;
-        $this->pageSize = $pageSize;
+        $this->perPage = $perPage;
         $this->setCurrentPage($currentPage); // Current page no.
     }
 
     public function toArray()
     {
         return array(
-            'page_size' => $this->pageSize,
+            'per_page' => $this->perPage,
             'current_page' => $this->currentPage,
             'page_index' => $this->pageIndex,
             'total_records' => $this->totalRecords,
@@ -42,7 +42,7 @@ class DataPager
     private function setCurrentPage($currentPage)
     {
         // Get total pages
-        $this->totalPages = ceil($this->totalRecords / $this->pageSize);
+        $this->totalPages = ceil($this->totalRecords / $this->perPage);
 
         // Set current page
         if ($currentPage >= 1 && $currentPage <= $this->totalPages) {
@@ -52,14 +52,14 @@ class DataPager
         }
 
         // Set pageIndex
-        $this->pageIndex = ($this->currentPage - 1) * $this->pageSize;
+        $this->pageIndex = ($this->currentPage - 1) * $this->perPage;
 
-        $this->setPageSize();
+        $this->setPerPage();
 
         return true;
     }
 
-    private function setPageSize()
+    private function setPerPage()
     {
         $this->pageStart = 1;
         $this->pageEnd = $this->totalPages;

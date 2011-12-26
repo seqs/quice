@@ -461,36 +461,6 @@ class DataAccess
     }
 
     /**
-     * Find records with given conditions by page
-     * If all parameters are empty, find all records
-     *
-     * @param array $conditions Array of conditions in column => value pairs
-     */
-    public function findByPage($table, $conditions = null, $fields = null, $order = null, $currentPage = 1, $pageSize = 20)
-    {
-        // Count records
-        $totalRecords = $this->count($table, $conditions);
-        if(empty($totalRecords)) {
-            return array('params' => null, 'records' => null);
-        }
-
-        // Validate page size
-        $pageSize = empty($pageSize) ? 20 : $pageSize;
-
-        if($pageSize > 10000) {
-            throw new Exception('Page size too large');
-        }
-
-        // Pager
-        $pager = new DataPager($totalRecords, $currentPage, $pageSize);
-
-        return array(
-            'params' => $pager->toArray(),
-            'records' => $this->find($table, $fields, $conditions, $order, $pager->getPageIndex(), $pageSize)
-        );
-    }
-
-    /**
      * Count the result set rows.
      *
      * @return int

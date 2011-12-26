@@ -129,7 +129,7 @@ class DataObject
     final public function find($conditions = null, $fields = null,
         $order = null, $index = 0, $offset = 100)
     {
-        if(empty($order)) {
+        if (empty($order)) {
             $order = array($this->getPrimary() => 'desc');
         }
 
@@ -145,27 +145,27 @@ class DataObject
      * @param array $conditions Array of conditions in column => value pairs
      */
     final public function findByPage($conditions = null, $fields = null,
-        $order = null, $currentPage = 1, $pageSize = 20)
+        $order = null, $currentPage = 1, $perPage = 20)
     {
         // Count records
         $totalRecords = $this->count($conditions);
-        if(empty($totalRecords)) {
+        if (empty($totalRecords)) {
             return array('params' => array(), 'records' => array());
         }
 
         // Validate page size
-        $pageSize = empty($pageSize) ? 20 : $pageSize;
+        $perPage = empty($perPage) ? 20 : $perPage;
 
-        if($pageSize > 10000) {
-            throw new Exception('Page size too large');
+        if ($perPage > 10000) {
+            throw new Exception('Per page limit 10000');
         }
 
         // Pager
-        $pager = new Maxi_Data_Pager($totalRecords, $currentPage, $pageSize);
+        $pager = new DataPager($totalRecords, $currentPage, $perPage);
 
         return array(
             'params' => $pager->toArray(),
-            'records' => $this->find($conditions, $fields, $order, $pager->getPageIndex(), $pageSize)
+            'records' => $this->find($conditions, $fields, $order, $pager->getPageIndex(), $perPage)
         );
     }
 
@@ -173,14 +173,18 @@ class DataObject
      * Find records with given primary key data
      *
      */
-    final public function findByPrimaries($primaries = array())
+    final public function findByPrimaries($primaries = array(), $fields = null)
     {
         $records = array();
         $primaries = array_filter(array_unique($primaries));
 
+        if ($primaries > 10000) {
+            throw new Exception('Primaries limit 10000');
+        }
+
         // Get records
         $conditions = array($this->getPrimary() => $primaries);
-        $data = $this->getDataAccess()->find($this->getTable(), null, $conditions);
+        $data = $this->getDataAccess()->find($this->getTable(), $fields, $conditions);
         foreach ($data as $item) {
             $records[$item[$this->getPrimary()]] = $item;
         }
@@ -194,7 +198,7 @@ class DataObject
      * @param array $records The records
      *
      * $fields = array('creator', 'updator');
-     * $this->getDao('User')->findByRecords($records, $fields);
+     * $userDao->findByRecords($records, $fields);
      */
     final public function findByRecords($records, $fields)
     {
