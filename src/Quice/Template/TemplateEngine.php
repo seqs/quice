@@ -102,7 +102,7 @@ class TemplateEngine
             throw new Exception(sprintf('The template directory "%s" is not registered.', $alias));
         }
 
-        $this->currentFile = $this->dirs[$alias] . '/' . $name . '.phtml';
+        $this->currentFile = str_replace('/', DIRECTORY_SEPARATOR, $this->dirs[$alias] . '/' . $name . '.phtml');
 
         if (!file_exists($this->currentFile)) {
             return false;
