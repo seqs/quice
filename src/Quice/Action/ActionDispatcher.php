@@ -38,38 +38,33 @@ class ActionDispatcher
 
     private function dispatch()
     {
-        $module = $this->request->getQuery('module', 'core');
+        $module = $this->request->getQuery('module', 'index');
         $action = $this->request->getQuery('action', 'index');
+        $do = $this->request->getQuery('do', 'index');
         $moduleName = $this->camelize($module) . 'Module';
         $actionName = $this->camelize($action) . 'Action';
+        $doName = 'do' . $this->camelize($do);
 
         if (!$this->container->hasComponent($moduleName)) {
-            throw new Exception('Module not found: ' . $module, 404);
+            throw new Exception('Module Not Found: ' . $module, 404);
         }
 
         $moduleClass = $this->container->getComponent($moduleName);
         $this->container->addComponents($moduleClass->getConfig());
 
         if (!$this->container->hasComponent($actionName)) {
-            throw new Exception('Action not found: ' . $action, 404);
+            throw new Exception('Action Not Found: ' . $action, 404);
         }
 
         $actionClass = $this->container->getComponent($actionName);
 
-        $methods = array('doGet', 'doPost', 'doPut', 'doDelete');
-        $method = 'do' . ucfirst(strtolower($this->request->getMethod()));
-
-        if (!in_array($method, $methods)) {
-            throw new Exception('Method Not Allowed', 501);
-        }
-
-        if (!method_exists($actionClass, $method)) {
-            throw new Exception('Not Implemented', 501);
+        if (!method_exists($actionClass, $doName)) {
+            throw new Exception('Method Not Found: ' . $do, 404);
         }
 
         $actionClass->request = $this->request;
         $actionClass->response = $this->response;
-        $actionClass->$method();
+        $actionClass->$doName();
     }
 
     private function camelize($name)
