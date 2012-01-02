@@ -14,7 +14,8 @@
 
 $_config = array(
     'env' => 'dev',
-    'tpl' => array('dirs' => array('quice' => __DIR__ . '/dev/tpl'))
+    'tpl' => array('dirs' => array('quice' => __DIR__ . '/dev/tpl')),
+    'modules' => array()
 );
 
 $_packages = array(
@@ -39,7 +40,7 @@ $_components = array(
     'Request' => array('class' => 'Quice\Http\Request'),
     'Response' => array(
         'class' => 'Quice\Http\Response',
-        'properties' => array('renderer' => 'Template'),
+        'properties' => array('renderer' => 'Template', 'url' => 'UrlHelper'),
     ),
     'Template' => array(
         'class' => 'Quice\Template\TemplateEngine',
@@ -50,6 +51,8 @@ $_components = array(
                 'request' => 'Request',
                 'trans' => 'Trans',
                 'html' => 'HtmlHelper',
+                'form' => 'FormHelper',
+                'modules' => '%modules%'
             ),
         ),
     ),
@@ -64,13 +67,18 @@ $_components = array(
         'properties' => array('url' => 'UrlHelper'),
     ),
 
+    'FormHelper' => array(
+        'class' => 'Quice\Helper\FormHelper',
+        'properties' => array('request' => 'Request'),
+    ),
+
     'Trans' => array(
         'class' => 'Quice\Locale\Translate',
         'properties' => array('dir' => '%i18n.dir%'),
     ),
 
     // Modules
-    'CoreModule' => array('class' => 'Quice\Developer\DeveloperModule'),
+    'IndexModule' => array('class' => 'Quice\Developer\DeveloperModule'),
     'DevModule' => array('class' => 'Quice\Developer\DeveloperModule'),
     'ErrorModule' => array('class' => 'Quice\Developer\DeveloperModule')
 );
