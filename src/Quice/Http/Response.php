@@ -104,14 +104,9 @@ class Response
     public $renderer = null;
 
     /**
-     * Exception
+     * Url
      */
-    public $exception = null;
-
-    /**
-     * Context
-     */
-    public $context = null;
+    public $url = null;
 
     /**
      * Singleton instance
@@ -446,6 +441,16 @@ class Response
     public function render($name, $vars = array())
     {
         $this->send($this->renderer->render($name, $vars));
+    }
+
+    /**
+     * Redirect to given url
+     *
+     * @return void
+     */
+    public function redirectTo($query)
+    {
+        $this->redirect($this->url->href($query));
     }
 
 }
