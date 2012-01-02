@@ -53,17 +53,17 @@ class DataAccess
     public $tablePrefix = '';
 
     public $dsn = '';
-    public $user = null;
+    public $username = null;
     public $password = null;
 
     /**
      * Constructor.
      *
      */
-    public function __construct($dsn = null, $user = null, $password = null)
+    public function __construct($dsn = null, $username = null, $password = null)
     {
         $this->dsn = $dsn;
-        $this->user = $user;
+        $this->username = $username;
         $this->password = $password;
     }
 
@@ -71,10 +71,10 @@ class DataAccess
      * Connect to a database server.
      * @return void
      */
-    public function connect($dsn, $user, $password)
+    public function connect($dsn, $username, $password)
     {
         try {
-            $this->connection = new PDO($dsn, $user, $password);
+            $this->connection = new PDO($dsn, $username, $password);
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             throw new Exception($e->getMessage(), intval($e->getCode()));
@@ -110,7 +110,7 @@ class DataAccess
         if ($this->connection) {
             return $this->connection;
         } else {
-            return $this->connect($this->dsn, $this->user, $this->password);
+            return $this->connect($this->dsn, $this->username, $this->password);
         }
     }
 
@@ -132,30 +132,6 @@ class DataAccess
     public function quote($string)
     {
         return $this->getConnection()->quote($string);
-    }
-
-    /**
-     * Set Logger.
-     *
-     * @return void
-     */
-    public function setLogger($logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * Get Logger.
-     *
-     * @return object
-     */
-    public function getLogger()
-    {
-        if (null === $this->logger) {
-            throw new Exception('Undefined logger instance.');
-        }
-
-        return $this->logger;
     }
 
     /**
@@ -344,8 +320,10 @@ class DataAccess
      */
     public function query($sql, $params = null)
     {
-        $this->getLogger()->debug($sql);
-        $this->getLogger()->debug(var_export($params, true));
+        if ($this->logger) {
+            $this->logger->debug($sql);
+            $this->logger->debug(var_export($params, true));
+        }
 
         if ($this->autoTransaction && !$this->hasTransaction()) {
             $this->beginTransaction();
@@ -360,7 +338,10 @@ class DataAccess
         }
 
         $rowCount = $sth->rowCount();
-        $this->getLogger()->debug('Query result: ' . $rowCount);
+
+        if ($this->logger) {
+            $this->logger->debug('Query result: ' . $rowCount);
+        }
 
         return $rowCount;
     }
@@ -372,8 +353,10 @@ class DataAccess
      */
     public function getBySql($sql, $params = null)
     {
-        $this->getLogger()->debug($sql);
-        $this->getLogger()->debug(var_export($params, true));
+        if ($this->logger) {
+            $this->logger->debug($sql);
+            $this->logger->debug(var_export($params, true));
+        }
 
         $sql = $this->applyLimit($sql, 0, 1);
         $sth = $this->getConnection()->prepare($sql);
@@ -387,7 +370,9 @@ class DataAccess
         $result = (array) $sth->fetch(PDO::FETCH_ASSOC);
         $sth->closeCursor();
 
-        $this->getLogger()->debug('Result set: ' . var_export($result, true));
+        if ($this->logger) {
+            $this->logger->debug('Result set: ' . var_export($result, true));
+        }
 
         return $result;
     }
@@ -424,8 +409,10 @@ class DataAccess
      */
     public function findBySql($sql, $params = null, $index = null, $offset = null)
     {
-        $this->getLogger()->debug($sql);
-        $this->getLogger()->debug(var_export($params, true));
+        if ($this->logger) {
+            $this->logger->debug($sql);
+            $this->logger->debug(var_export($params, true));
+        }
 
         $sql = $this->applyLimit($sql, $index, $offset);
         $sth = $this->getConnection()->prepare($sql);
@@ -439,7 +426,9 @@ class DataAccess
         $result = (array) $sth->fetchAll(PDO::FETCH_ASSOC);
         $sth->closeCursor();
 
-        $this->getLogger()->debug('Result set: ' . var_export($result, true));
+        if ($this->logger) {
+            $this->logger->debug('Result set: ' . var_export($result, true));
+        }
 
         return $result;
     }
