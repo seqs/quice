@@ -1,16 +1,24 @@
 <?php $this->extend('quice:base'); ?>
 
+<?php
+$divider = ' <span class="divider">-</span>';
+$linkTo = function($text, $name = null)use($url, $html) {
+    $query = array('module' => 'dev', 'action' => 'doc', 'name' => $name);
+    return $html->link($url->href($query), $text);
+};
+?>
+
 <div class="box">
     <h2 class="title success">Quice Document</h2>
 
     <ul class="nav">
-        <li><a href="<?php echo $url->href('dev', 'doc'); ?>">Home</a> <span class="divider">-</span></li>
-        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'install')); ?>">Install</a> <span class="divider">-</span></li>
-        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'container')); ?>">Container</a> <span class="divider">-</span></li>
-        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'module')); ?>">Module</a> <span class="divider">-</span></li>
-        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'action')); ?>">Action</a> <span class="divider">-</span></li>
-        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'service')); ?>">Service</a> <span class="divider">-</span></li>
-        <li><a href="<?php echo $url->href('dev', 'doc', array('name' => 'event')); ?>">Event</a></li>
+        <li><?php echo $linkTo('Home') . $divider; ?></li>
+        <li><?php echo $linkTo('Install', 'install') . $divider; ?></li>
+        <li><?php echo $linkTo('Container', 'container') . $divider; ?></li>
+        <li><?php echo $linkTo('Module', 'module') . $divider; ?></li>
+        <li><?php echo $linkTo('Action', 'action') . $divider; ?></li>
+        <li><?php echo $linkTo('Service', 'service') . $divider; ?></li>
+        <li><?php echo $linkTo('Event', 'event'); ?></li>
     </ul>
 
     <div class="block">
