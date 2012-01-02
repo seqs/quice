@@ -26,6 +26,19 @@ class FormHelper
         }
     }
 
+    public function message($name, $info = null)
+    {
+        $errorPattern = '<span class="form_message_error">%s</span>';
+        $infoPattern = '<span class="form_message_info">%s</span>';
+        if ($this->state && $error = $this->state->getError($name)) {
+            return sprintf($errorPattern, $error);
+        } else if ($info) {
+            return sprintf($infoPattern, $info);
+        } else {
+            return '';
+        }
+    }
+
     public function file($name = '')
     {
         $pattern = '<input type="file" class="form_text form_small" name="%s" id="form_%s" value="" />';
@@ -33,6 +46,13 @@ class FormHelper
     }
 
     public function input($name = '', $value = '', $size = 30)
+    {
+        $pattern = '<input name="%s" id="form_%s" value="%s" type="text" size="%d" class="form_text" />';
+        $value = $this->request->getPost($name, $value);
+        return sprintf($pattern, $name, $name, $value, $size);
+    }
+
+    public function text($name = '', $value = '', $size = 30)
     {
         $pattern = '<input name="%s" id="form_%s" value="%s" type="text" size="%d" class="form_text" />';
         $value = $this->request->getPost($name, $value);
