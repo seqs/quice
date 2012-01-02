@@ -49,7 +49,7 @@ class BaseAction
 
 class IndexAction extends BaseAction
 {
-    public function doGet()
+    public function doIndex()
     {
         return $this->response->render('index');
     }
@@ -59,7 +59,7 @@ class EventAction extends BaseAction
 {
     public $fooService;
 
-    public function doGet()
+    public function doIndex()
     {
         $ret = $this->fooService->send('tom', 'jerry');
         return $this->response->render('event', array('ret' => $ret));

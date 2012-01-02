@@ -33,7 +33,7 @@ class BaseAction
 
 class IndexAction extends BaseAction
 {
-    public function doGet()
+    public function doIndex()
     {
         return $this->response->render('quice:welcome');
     }
@@ -43,7 +43,7 @@ class DocumentAction extends BaseAction
 {
     public $parser;
 
-    public function doGet()
+    public function doIndex()
     {
         $name = $this->request->getQuery('name');
         $baseDir = __DIR__ . '/../../../../';
