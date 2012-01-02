@@ -11,6 +11,8 @@
 
 namespace Quice\Data;
 
+use Exception;
+
 class DataObject
 {
     public $dataAccess = null;
@@ -28,7 +30,15 @@ class DataObject
             throw new Exception('Table name undefined.');
         }
 
-        return $this->dataAccess->getTablePrefix() . $this->table;
+        return $this->table;
+    }
+
+    public function getDataAccess()
+    {
+        if (null === $this->dataAccess) {
+            throw new Exception('Data access undefined.');
+        }
+        return $this->dataAccess;
     }
 
     /**
@@ -46,7 +56,7 @@ class DataObject
      *
      * @param none
      */
-    final public function insert($fields)
+    final public function create($fields)
     {
         return $this->getDataAccess()->insert($this->getTable(), $fields);
     }
